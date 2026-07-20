@@ -12,11 +12,11 @@ A mobile-first song request page with a private DJ queue, built with Next.js and
 ## Deploy to Vercel
 
 1. Push this project to GitHub and import it in Vercel.
-2. Create a free Redis database at [Upstash](https://console.upstash.com/).
+2. Create or select an [Upstash Redis](https://console.upstash.com/) database.
 3. In Vercel → Project → Settings → Environment Variables, add:
-   - `UPSTASH_REDIS_REST_URL`
-   - `UPSTASH_REDIS_REST_TOKEN`
+   - `KV_REST_API_URL`
+   - `KV_REST_API_TOKEN`
    - `ADMIN_PASSWORD`
 4. Redeploy, then share your Vercel URL or turn it into a QR code for the party.
 
-Requests are kept in a Redis sorted set. The admin password is checked server-side and stored only in the DJ browser's session storage.
+Requests are kept in an Upstash Redis sorted set. The admin password is checked server-side and stored only in the DJ browser's session storage. The read-only token, `KV_URL`, and `REDIS_URL` are not required.

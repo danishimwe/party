@@ -30,8 +30,9 @@ export async function POST(request) {
     if (count === 1) await db.expire(rateKey, 60);
     if (count > 4) return NextResponse.json({ error: "Easy there—please wait a minute before sending more." }, { status: 429 });
 
+    const id = randomUUID();
     const songRequest = {
-      id: randomUUID(),
+      id,
       name: data.name,
       title: data.title,
       artist: data.artist,
@@ -51,7 +52,7 @@ export async function POST(request) {
 export async function GET(request) {
   if (!process.env.ADMIN_PASSWORD || request.headers.get("x-admin-password") !== process.env.ADMIN_PASSWORD) return unauthorized();
   const db = getRedis();
-  if (!db) return NextResponse.json({ error: "Redis is not configured." }, { status: 503 });
+  if (!db) return NextResponse.json({ error: "Upstash Redis is not configured." }, { status: 503 });
   const raw = await db.zrange("dj-scorpion:requests", 0, -1, { rev: true });
   const requests = raw.map((item) => typeof item === "string" ? JSON.parse(item) : item);
   return NextResponse.json({ requests });
@@ -60,13 +61,14 @@ export async function GET(request) {
 export async function DELETE(request) {
   if (!process.env.ADMIN_PASSWORD || request.headers.get("x-admin-password") !== process.env.ADMIN_PASSWORD) return unauthorized();
   const db = getRedis();
-  if (!db) return NextResponse.json({ error: "Redis is not configured." }, { status: 503 });
+  if (!db) return NextResponse.json({ error: "Upstash Redis is not configured." }, { status: 503 });
   const { id } = await request.json();
+  if (typeof id !== "string" || !id) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   const raw = await db.zrange("dj-scorpion:requests", 0, -1);
   const match = raw.find((item) => {
     const parsed = typeof item === "string" ? JSON.parse(item) : item;
     return parsed.id === id;
   });
-  if (match) await db.zrem("dj-scorpion:requests", match);
+  if (match) await db.zrem("dj-scorpion:requests", typeof match === "string" ? match : JSON.stringify(match));
   return NextResponse.json({ ok: true });
 }
