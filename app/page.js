@@ -39,14 +39,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <footer>
-        <div className="shell footer-inner">
-          <a className="brand" href="#top"><span className="brand-mark"><Disc3 size={18} /></span><span>DJ SCORPION</span></a>
-          <p>Turn it up. Make it count.</p>
-          <a className="admin-link" href="/admin">DJ access</a>
-        </div>
-      </footer>
     </main>
   );
 }
