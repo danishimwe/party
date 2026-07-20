@@ -1,4 +1,5 @@
 import RequestForm from "@/components/RequestForm";
+import LiveQueue from "@/components/LiveQueue";
 import { Disc3, Radio, Sparkles } from "lucide-react";
 
 export default function Home() {
@@ -39,6 +40,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <LiveQueue />
     </main>
   );
 }

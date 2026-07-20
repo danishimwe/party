@@ -20,3 +20,5 @@ A mobile-first song request page with a private DJ queue, built with Next.js and
 4. Redeploy, then share your Vercel URL or turn it into a QR code for the party.
 
 Requests are kept in an Upstash Redis sorted set. The admin password is checked server-side and stored only in the DJ browser's session storage. The read-only token, `KV_URL`, and `REDIS_URL` are not required.
+
+Guests see the numbered waiting list and the current track. From `/admin`, **Play next** promotes request #1 to the public now-playing display; **Stop & archive** removes it from public view and adds it to the private played history.

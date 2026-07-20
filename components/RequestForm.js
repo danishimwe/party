@@ -29,6 +29,7 @@ export default function RequestForm() {
       if (!response.ok) throw new Error(data.error || "Could not send your request.");
       setStatus("success");
       setForm(initialForm);
+      window.dispatchEvent(new Event("song-requested"));
     } catch (error) {
       setStatus("error");
       setMessage(error.message);
