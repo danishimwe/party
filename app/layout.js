@@ -1,19 +1,19 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Request a track — DJ Scorpion",
-  description: "Send your song request straight to DJ Scorpion.",
+  title: "Demandez un morceau — DJ Scorpion",
+  description: "Envoyez votre demande de morceau directement à DJ Scorpion.",
   metadataBase: new URL("https://dj-scorpion.vercel.app"),
   openGraph: {
-    title: "Request a track — DJ Scorpion",
-    description: "What should DJ Scorpion play next?",
+    title: "Demandez un morceau — DJ Scorpion",
+    description: "Quel morceau DJ Scorpion devrait-il passer ensuite ?",
     images: ["/dj-scorpion.jpg"],
   },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body>{children}</body>
     </html>
   );

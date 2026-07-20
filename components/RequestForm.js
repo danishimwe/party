@@ -26,7 +26,7 @@ export default function RequestForm() {
         body: JSON.stringify(form),
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not send your request.");
+      if (!response.ok) throw new Error(data.error || "Impossible d’envoyer votre demande.");
       setStatus("success");
       setForm(initialForm);
       window.dispatchEvent(new Event("song-requested"));
@@ -40,10 +40,10 @@ export default function RequestForm() {
     return (
       <div className="request-card success-card" role="status">
         <div className="success-icon"><Check size={34} strokeWidth={2.5} /></div>
-        <span className="step">REQUEST RECEIVED</span>
-        <h3>You’re in the queue.</h3>
-        <p>I’ve got your track. Stay close to the dance floor and listen out for it.</p>
-        <button className="text-button" onClick={() => setStatus("idle")}>Send another request <ArrowRight size={16} /></button>
+        <span className="step">DEMANDE REÇUE</span>
+        <h3>Vous êtes dans la file.</h3>
+        <p>J’ai bien reçu votre morceau. Restez près de la piste et tendez l’oreille.</p>
+        <button className="text-button" onClick={() => setStatus("idle")}>Envoyer une autre demande <ArrowRight size={16} /></button>
       </div>
     );
   }
@@ -52,33 +52,33 @@ export default function RequestForm() {
     <form className="request-card" onSubmit={submit}>
       <div className="card-heading">
         <span className="card-icon"><Music2 size={20} /></span>
-        <div><span>NOW ACCEPTING</span><h3>Drop your track</h3></div>
+        <div><span>DEMANDES OUVERTES</span><h3>Proposez votre morceau</h3></div>
       </div>
 
       <label>
-        <span>Your name <i>required</i></span>
-        <input name="name" value={form.name} onChange={update} placeholder="What should I call you?" maxLength={50} required />
+        <span>Votre nom <i>obligatoire</i></span>
+        <input name="name" value={form.name} onChange={update} placeholder="Comment dois-je vous appeler ?" maxLength={50} required />
       </label>
       <label>
-        <span>Song title <i>required</i></span>
-        <input name="title" value={form.title} onChange={update} placeholder="The track you want to hear" maxLength={120} required />
+        <span>Titre du morceau <i>obligatoire</i></span>
+        <input name="title" value={form.title} onChange={update} placeholder="Le morceau que vous voulez entendre" maxLength={120} required />
       </label>
       <label>
         <span>Artist</span>
-        <input name="artist" value={form.artist} onChange={update} placeholder="Who is it by?" maxLength={100} />
+        <input name="artist" value={form.artist} onChange={update} placeholder="De quel artiste ?" maxLength={100} />
       </label>
       <label>
-        <span>Dedication or note <small>optional</small></span>
-        <textarea name="note" value={form.note} onChange={update} placeholder="Birthday, shout-out, dance-floor emergency…" maxLength={240} rows={3} />
+        <span>Dédicace ou message <small>facultatif</small></span>
+        <textarea name="note" value={form.note} onChange={update} placeholder="Anniversaire, dédicace, urgence sur la piste…" maxLength={240} rows={3} />
       </label>
       <input className="honeypot" name="website" value={form.website} onChange={update} tabIndex="-1" autoComplete="off" aria-hidden="true" />
 
       {status === "error" && <p className="form-error" role="alert">{message}</p>}
       <button className="submit-button" disabled={status === "loading"}>
-        <span>{status === "loading" ? "Sending…" : "Send my request"}</span>
+        <span>{status === "loading" ? "Envoi…" : "Envoyer ma demande"}</span>
         {status === "loading" ? <LoaderCircle className="spin" size={20} /> : <ArrowRight size={20} />}
       </button>
-      <p className="fine-print">Requests are suggestions, not guarantees. Trust the mix.</p>
+      <p className="fine-print">Les demandes sont des suggestions, sans garantie. Faites confiance au mix.</p>
     </form>
   );
 }

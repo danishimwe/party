@@ -31,37 +31,37 @@ export default function LiveQueue() {
   }, [load]);
 
   return (
-    <section className="public-queue-section" aria-labelledby="live-queue-title">
+    <section id="file-demandes" className="public-queue-section" aria-labelledby="live-queue-title">
       <div className="shell">
         <div className="public-queue-heading">
           <div>
-            <span className="step"><Radio size={13} /> LIVE FROM THE BOOTH</span>
-            <h2 id="live-queue-title">The request line</h2>
+            <span className="step"><Radio size={13} /> EN DIRECT DE LA RÉGIE</span>
+            <h2 id="live-queue-title">La file des demandes</h2>
           </div>
-          <span className="public-count">{requests.length} waiting</span>
+          <span className="public-count">{requests.length} en attente</span>
         </div>
 
         <div className={`now-playing-card${nowPlaying ? " is-playing" : ""}`}>
           <span className="now-playing-icon">{nowPlaying ? <Disc3 size={30} /> : <Music2 size={28} />}</span>
           <div>
-            <span>{nowPlaying ? "NOW PLAYING" : "NOW PLAYING"}</span>
-            <h3>{nowPlaying ? nowPlaying.title : "The next move is loading…"}</h3>
-            <p>{nowPlaying ? (nowPlaying.artist || "Artist not given") : "DJ Scorpion is choosing the next track."}</p>
+            <span>EN COURS</span>
+            <h3>{nowPlaying ? nowPlaying.title : "La suite arrive…"}</h3>
+            <p>{nowPlaying ? (nowPlaying.artist || "Artiste non renseigné") : "DJ Scorpion choisit le prochain morceau."}</p>
           </div>
-          {nowPlaying && <i className="equalizer" aria-label="Playing"><b /><b /><b /><b /></i>}
+          {nowPlaying && <i className="equalizer" aria-label="En lecture"><b /><b /><b /><b /></i>}
         </div>
 
         {loading ? (
-          <div className="public-queue-empty"><LoaderCircle className="spin" size={24} /> Loading the queue…</div>
+          <div className="public-queue-empty"><LoaderCircle className="spin" size={24} /> Chargement de la file…</div>
         ) : requests.length === 0 ? (
-          <div className="public-queue-empty"><Disc3 size={28} /> No songs waiting yet. Be the first to request one.</div>
+          <div className="public-queue-empty"><Disc3 size={28} /> Aucun morceau en attente. Soyez le premier à en proposer un.</div>
         ) : (
           <ol className="public-request-list">
             {requests.map((item, index) => (
               <li key={item.id}>
                 <span className="public-number">{String(index + 1).padStart(2, "0")}</span>
-                <div><strong>{item.title}</strong><small>{item.artist || "Artist not given"}</small></div>
-                <span className="public-requester">Requested by {item.name}</span>
+                <div><strong>{item.title}</strong><small>{item.artist || "Artiste non renseigné"}</small></div>
+                <span className="public-requester">Demandé par {item.name}</span>
               </li>
             ))}
           </ol>

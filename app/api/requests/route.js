@@ -14,7 +14,7 @@ const requestSchema = z.object({
 });
 
 function unauthorized() {
-  return NextResponse.json({ error: "Incorrect DJ password." }, { status: 401 });
+  return NextResponse.json({ error: "Mot de passe DJ incorrect." }, { status: 401 });
 }
 
 function parseItem(item) {
@@ -34,14 +34,14 @@ export async function POST(request) {
   try {
     const data = requestSchema.parse(await request.json());
     const db = getRedis();
-    if (!db) return NextResponse.json({ error: "Requests aren’t connected yet. Please tell the DJ." }, { status: 503 });
+    if (!db) return NextResponse.json({ error: "Les demandes ne sont pas encore connectées. Prévenez le DJ." }, { status: 503 });
 
     const forwarded = request.headers.get("x-forwarded-for") || "unknown";
     const ip = forwarded.split(",")[0].trim();
     const rateKey = `request-rate:${ip}`;
     const count = await db.incr(rateKey);
     if (count === 1) await db.expire(rateKey, 60);
-    if (count > 4) return NextResponse.json({ error: "Easy there—please wait a minute before sending more." }, { status: 429 });
+    if (count > 4) return NextResponse.json({ error: "Doucement ! Attendez une minute avant d’envoyer une autre demande." }, { status: 429 });
 
     const id = randomUUID();
     const songRequest = {
@@ -56,9 +56,9 @@ export async function POST(request) {
     await db.zadd("dj-scorpion:requests", { score: Date.now(), member: JSON.stringify(songRequest) });
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (error) {
-    if (error instanceof z.ZodError) return NextResponse.json({ error: "Please check the form and try again." }, { status: 400 });
+    if (error instanceof z.ZodError) return NextResponse.json({ error: "Vérifiez le formulaire puis réessayez." }, { status: 400 });
     console.error(error);
-    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Une erreur est survenue. Veuillez réessayer." }, { status: 500 });
   }
 }
 
@@ -66,7 +66,7 @@ export async function GET(request) {
   const suppliedPassword = request.headers.get("x-admin-password");
   if (suppliedPassword && !isAdmin(request)) return unauthorized();
   const db = getRedis();
-  if (!db) return NextResponse.json({ error: "Upstash Redis is not configured." }, { status: 503 });
+  if (!db) return NextResponse.json({ error: "Upstash Redis n’est pas configuré." }, { status: 503 });
   const [rawRequests, rawNowPlaying] = await Promise.all([
     db.zrange("dj-scorpion:requests", 0, -1),
     db.get("dj-scorpion:now-playing"),
@@ -88,15 +88,15 @@ export async function GET(request) {
 export async function PATCH(request) {
   if (!isAdmin(request)) return unauthorized();
   const db = getRedis();
-  if (!db) return NextResponse.json({ error: "Upstash Redis is not configured." }, { status: 503 });
+  if (!db) return NextResponse.json({ error: "Upstash Redis n’est pas configuré." }, { status: 503 });
   const { action } = await request.json();
 
   if (action === "play") {
     const current = await db.get("dj-scorpion:now-playing");
-    if (current) return NextResponse.json({ error: "Stop the current song before playing another." }, { status: 409 });
+    if (current) return NextResponse.json({ error: "Arrêtez le morceau en cours avant d’en lancer un autre." }, { status: 409 });
 
     const first = (await db.zrange("dj-scorpion:requests", 0, 0))[0];
-    if (!first) return NextResponse.json({ error: "The request queue is empty." }, { status: 409 });
+    if (!first) return NextResponse.json({ error: "La file des demandes est vide." }, { status: 409 });
 
     const song = parseItem(first);
     await db.multi()
@@ -108,7 +108,7 @@ export async function PATCH(request) {
 
   if (action === "stop") {
     const current = await db.get("dj-scorpion:now-playing");
-    if (!current) return NextResponse.json({ error: "No song is currently playing." }, { status: 409 });
+    if (!current) return NextResponse.json({ error: "Aucun morceau n’est en cours de lecture." }, { status: 409 });
 
     const song = parseItem(current);
     const playedSong = { ...song, playedAt: new Date().toISOString() };
@@ -119,15 +119,15 @@ export async function PATCH(request) {
     return NextResponse.json({ ok: true });
   }
 
-  return NextResponse.json({ error: "Unknown queue action." }, { status: 400 });
+  return NextResponse.json({ error: "Action inconnue pour la file." }, { status: 400 });
 }
 
 export async function DELETE(request) {
   if (!process.env.ADMIN_PASSWORD || request.headers.get("x-admin-password") !== process.env.ADMIN_PASSWORD) return unauthorized();
   const db = getRedis();
-  if (!db) return NextResponse.json({ error: "Upstash Redis is not configured." }, { status: 503 });
+  if (!db) return NextResponse.json({ error: "Upstash Redis n’est pas configuré." }, { status: 503 });
   const { id } = await request.json();
-  if (typeof id !== "string" || !id) return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  if (typeof id !== "string" || !id) return NextResponse.json({ error: "Demande invalide." }, { status: 400 });
   const raw = await db.zrange("dj-scorpion:requests", 0, -1);
   const match = raw.find((item) => {
     const parsed = parseItem(item);
